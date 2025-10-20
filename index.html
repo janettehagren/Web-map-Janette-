@@ -497,6 +497,19 @@ pattern_NFR.addTo(map);
             collapsed: true,
         });
         lay.addTo(map);
+		// --- Add title above basemap / layer control --- //
+		var baseMapLabel = L.control({ position: 'topright' });
+		
+		baseMapLabel.onAdd = function (map) {
+		    var div = L.DomUtil.create('div', 'leaflet-control-layers-title');
+		    div.innerHTML = '<b>Select basemap</b>';
+		    div.style.backgroundColor = 'white';
+		    div.style.padding = '4px';
+		    div.style.marginBottom = '2px';
+		    div.style.textAlign = 'center';
+		    return div;
+		};
+		baseMapLabel.addTo(map);			
         setBounds();
 		L.control.mousePosition({numDigits: 2}).addTo(map);
 		L.control.betterscale({
