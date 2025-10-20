@@ -57,6 +57,7 @@
 		<script src="js/L.Control.BetterScale.js"></script>
         <script>
 
+		// zoom to feature 
 		function zoomToFeature(e) {map.fitBounds(e.target.getBounds({padding: [200, 200]})); }
 		var highlightLayer;
 		function highlightFeature(e) {
@@ -69,10 +70,13 @@
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:6
         })
+
+		// attribution notions 
         var hash = new L.Hash(map);
 		map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/ardhi/Leaflet.MousePosition" target="_blank">Leaflet.MousePosition</a> &middot; <a href="https://github.com/daniellsu/leaflet-betterscale" target="_blank">Leaflet.BetterScale</a>');        
 		var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        // remove popup's row if "visible-with-data"
+        
+		// remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
          var tempDiv = document.createElement('div');
          tempDiv.innerHTML = content;
@@ -86,6 +90,7 @@
          }
          return tempDiv.innerHTML;
         }
+		
         // modify popup if contains media
         function addClassToPopupIfMedia(content, popup) {
             var tempDiv = document.createElement('div');
@@ -133,7 +138,7 @@
                 popup._contentNode.classList.remove('media');
             }
         }
-        var title = new L.Control({'position':'topleft'});
+        var title = new L.Control({'position':'bottomright'});
         title.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'info');
             this.update();
@@ -156,7 +161,7 @@
 				</p>`;
 		};
 
-		// --- TOGGLE CONTROL FOR TITLE AND ABSTRACT --- //
+		// TOGGLE CONTROL FOR TITLE AND ABSTRACT //
 		var infoVisible = true;
 		
 		var toggleButton = L.control({position: 'topright'});
@@ -165,8 +170,8 @@
 		    div.style.backgroundColor = 'white';
 		    div.style.cursor = 'pointer';
 		    div.style.padding = '5px';
-		    div.innerHTML = '<b>information</b>'; 
-		    div.title = 'Toggle info boxes';
+		    div.innerHTML = '<b>Title and abstract</b>'; 
+		    div.title = 'Title and abstract';
 		    div.onclick = function(){
 		        infoVisible = !infoVisible;
 		        var infoBoxes = document.getElementsByClassName('info');
@@ -178,8 +183,8 @@
 		};
 		toggleButton.addTo(map);
 
-
-        title.addTo(map);
+        }
+		 title.addTo(map);
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
@@ -189,35 +194,30 @@
                 map.fitBounds(bounds_group.getBounds());
             }
         }
-					// Basemap pane
-		map.createPane('pane_Base');
-		map.getPane('pane_Base').style.zIndex = 400;
-		
-		// Basemaps
+		map.createPane('pane_OpenStreetMap_0');
+		map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
 		var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		  pane: 'pane_Base',
-		  opacity: 1.0,
-		  attribution: '<a href="https://www.openstreetmap.org/">© OpenStreetMap contributors</a>',
-		  minZoom: 5, maxZoom: 28, maxNativeZoom: 19
+		 pane: 'pane_OpenStreetMap_0',
+		 opacity: 1.0,
+		 attribution: '<a href="https://www.openstreetmap.org/">© OpenStreetMap contributors</a>',
+		 minZoom: 5,
+		 maxZoom: 28,
+		 minNativeZoom: 0,
+		 maxNativeZoom: 18
+		})
+		var layer_Google_sat = L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+		minZoom: 5,
+		maxZoom: 28,
+		attribution: '<a href="https://www.google.com/maps">© Google</a>'
 		});
-		
-		var layer_Google_sat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-		  pane: 'pane_Base',
-		  attribution: '<a href="https://www.google.com/maps">© Google</a>',
-		  maxZoom: 20
-		});
-		
-		// Add only one by default
-		map.addLayer(layer_OpenStreetMap_0);
-		
-		// Basemap switcher
+		map.addLayer(layer_OpenStreetMap_0, layer_Google_sat);
 		var baseMaps = {
 		  "OpenStreetMap": layer_OpenStreetMap_0,
 		  "Google Satellite": layer_Google_sat
 		};
-		var baseCtrl = L.control.layers(baseMaps, null, { collapsed: false, position: 'topright' }).addTo(map);
+
+		var baseCtrl = L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
 		
-		// Title inside the SAME box as the basemap radios
 		var baseBox = baseCtrl.getContainer().querySelector('.leaflet-control-layers-base');
 		if (baseBox) {
 		  var baseTitleEl = document.createElement('p');
