@@ -70,7 +70,7 @@
             zoomControl:false, maxZoom:28, minZoom:6
         })
         var hash = new L.Hash(map);
-		map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/ardhi/Leaflet.MousePosition" target="_blank">Leaflet.MousePosition</a> &middot; <a href"https://github.com/daniellsu/leaflet-betterscale" target="_blank">Leaflet.BetterScale</a>');        
+		map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/ardhi/Leaflet.MousePosition" target="_blank">Leaflet.MousePosition</a> &middot; <a href="https://github.com/daniellsu/leaflet-betterscale" target="_blank">Leaflet.BetterScale</a>');        
 		var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
@@ -165,7 +165,7 @@
 		    div.style.backgroundColor = 'white';
 		    div.style.cursor = 'pointer';
 		    div.style.padding = '5px';
-		    div.innerHTML = '<b>🛈</b>'; // icon
+		    div.innerHTML = '<b>information</b>'; 
 		    div.title = 'Toggle info boxes';
 		    div.onclick = function(){
 		        infoVisible = !infoVisible;
@@ -189,38 +189,43 @@
                 map.fitBounds(bounds_group.getBounds());
             }
         }
-		map.createPane('pane_OpenStreetMap_0');
-		map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+					// Basemap pane
+		map.createPane('pane_Base');
+		map.getPane('pane_Base').style.zIndex = 400;
+		
+		// Basemaps
 		var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		 pane: 'pane_OpenStreetMap_0',
-		 opacity: 1.0,
-		 attribution: '<a href="https://www.openstreetmap.org/">© OpenStreetMap contributors</a>',
-		 minZoom: 5,
-		 maxZoom: 28,
-		 minNativeZoom: 0,
-		 maxNativeZoom: 18
-		})
-		var layer_Google_sat = L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
-		minZoom: 5,
-		maxZoom: 28,
-		attribution: '<a href="https://www.google.com/maps">© Google</a>'
+		  pane: 'pane_Base',
+		  opacity: 1.0,
+		  attribution: '<a href="https://www.openstreetmap.org/">© OpenStreetMap contributors</a>',
+		  minZoom: 5, maxZoom: 28, maxNativeZoom: 19
 		});
-		map.addLayer(layer_OpenStreetMap_0, layer_Google_sat);
+		
+		var layer_Google_sat = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+		  pane: 'pane_Base',
+		  attribution: '<a href="https://www.google.com/maps">© Google</a>',
+		  maxZoom: 20
+		});
+		
+		// Add only one by default
+		map.addLayer(layer_OpenStreetMap_0);
+		
+		// Basemap switcher
 		var baseMaps = {
 		  "OpenStreetMap": layer_OpenStreetMap_0,
 		  "Google Satellite": layer_Google_sat
 		};
+		var baseCtrl = L.control.layers(baseMaps, null, { collapsed: false, position: 'topright' }).addTo(map);
+		
+		// Title inside the SAME box as the basemap radios
+		var baseBox = baseCtrl.getContainer().querySelector('.leaflet-control-layers-base');
+		if (baseBox) {
+		  var baseTitleEl = document.createElement('p');
+		  baseTitleEl.innerHTML = '<b>Select basemap</b>';
+		  baseTitleEl.style.margin = '4px 0 2px 8px';
+		  baseBox.prepend(baseTitleEl);
+		}
 
-		var layerControl = L.control.layers(baseMaps, overlayMaps, {
-		    collapsed: false
-		}).addTo(map);
-		
-		var layersList = layerControl.getContainer().getElementsByClassName('leaflet-control-layers-base')[0];
-		var title = document.createElement('p');
-		title.innerHTML = '<b>Select basemap</b>';
-		title.style.margin = '4px 0 2px 8px';
-		layersList.prepend(title);
-		
         function pop_TanzaniaNationalParks2016_1(feature, layer) {
             layer.on({
                 mouseout: function(e) {
