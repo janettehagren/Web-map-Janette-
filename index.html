@@ -57,7 +57,6 @@
 		<script src="js/L.Control.BetterScale.js"></script>
         <script>
 
-		// zoom to feature 
 		function zoomToFeature(e) {map.fitBounds(e.target.getBounds({padding: [200, 200]})); }
 		var highlightLayer;
 		function highlightFeature(e) {
@@ -70,13 +69,10 @@
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:6
         })
-
-		// attribution notions 
         var hash = new L.Hash(map);
-		map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/ardhi/Leaflet.MousePosition" target="_blank">Leaflet.MousePosition</a> &middot; <a href="https://github.com/daniellsu/leaflet-betterscale" target="_blank">Leaflet.BetterScale</a>');        
+		map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a> &middot; <a href="https://github.com/ardhi/Leaflet.MousePosition" target="_blank">Leaflet.MousePosition</a> &middot; <a href"https://github.com/daniellsu/leaflet-betterscale" target="_blank">Leaflet.BetterScale</a>');        
 		var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        
-		// remove popup's row if "visible-with-data"
+        // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
          var tempDiv = document.createElement('div');
          tempDiv.innerHTML = content;
@@ -90,7 +86,6 @@
          }
          return tempDiv.innerHTML;
         }
-		
         // modify popup if contains media
         function addClassToPopupIfMedia(content, popup) {
             var tempDiv = document.createElement('div');
@@ -138,7 +133,7 @@
                 popup._contentNode.classList.remove('media');
             }
         }
-        var title = new L.Control({'position':'bottomright'});
+        var title = new L.Control({'position':'topleft'});
         title.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'info');
             this.update();
@@ -161,30 +156,7 @@
 				</p>`;
 		};
 
-		// TOGGLE CONTROL FOR TITLE AND ABSTRACT //
-		var infoVisible = true;
-		
-		var toggleButton = L.control({position: 'topright'});
-		toggleButton.onAdd = function(map) {
-		    var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-		    div.style.backgroundColor = 'white';
-		    div.style.cursor = 'pointer';
-		    div.style.padding = '5px';
-		    div.innerHTML = '<b>Title and abstract</b>'; 
-		    div.title = 'Title and abstract';
-		    div.onclick = function(){
-		        infoVisible = !infoVisible;
-		        var infoBoxes = document.getElementsByClassName('info');
-		        for (var i = 0; i < infoBoxes.length; i++) {
-		            infoBoxes[i].style.display = infoVisible ? 'block' : 'none';
-		        }
-		    };
-		    return div;
-		};
-		toggleButton.addTo(map);
-
-        }
-		 title.addTo(map);
+        title.addTo(map);
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
@@ -216,16 +188,10 @@
 		  "Google Satellite": layer_Google_sat
 		};
 
-		var baseCtrl = L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
-		
-		var baseBox = baseCtrl.getContainer().querySelector('.leaflet-control-layers-base');
-		if (baseBox) {
-		  var baseTitleEl = document.createElement('p');
-		  baseTitleEl.innerHTML = '<b>Select basemap</b>';
-		  baseTitleEl.style.margin = '4px 0 2px 8px';
-		  baseBox.prepend(baseTitleEl);
-		}
+// lisää basemap-valikko kartalle
+L.control.layers(baseMaps, null, { collapsed: false }).addTo(map);
 
+		
         function pop_TanzaniaNationalParks2016_1(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -349,7 +315,7 @@
         map.createPane('pane_TanzaniaNationalParks2016_1');
         map.getPane('pane_TanzaniaNationalParks2016_1').style.zIndex = 401;
         map.getPane('pane_TanzaniaNationalParks2016_1').style['mix-blend-mode'] = 'normal';
-		map.getPane('pane_TanzaniaNationalParks2016_1').style.opacity=0.7;
+		map.getPane('pane_TanzaniaNationalParks2016_1'),style.opacity=0.7;
         var layer_TanzaniaNationalParks2016_1 = new L.geoJson(json_TanzaniaNationalParks2016_1, {
             attribution: '',
             interactive: true,
@@ -508,7 +474,7 @@ pattern_NFR.addTo(map);
             collapsed: true,
         });
         lay.addTo(map);
-		setBounds();
+        setBounds();
 		L.control.mousePosition({numDigits: 2}).addTo(map);
 		L.control.betterscale({
 			metric: true, 
