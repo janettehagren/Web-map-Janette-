@@ -157,6 +157,30 @@
 		};
 
         title.addTo(map);
+
+		// --- Toggle info box visibility ---
+		var infoVisible = true;
+		
+		var toggleInfoBtn = L.control({position: 'topright'});
+		toggleInfoBtn.onAdd = function(map) {
+		    var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+		    div.style.backgroundColor = 'white';
+		    div.style.cursor = 'pointer';
+		    div.style.padding = '5px';
+		    div.innerHTML = '<b>Toggle info</b>';
+		    div.title = 'Show / hide info box';
+		    div.onclick = function() {
+		        infoVisible = !infoVisible;
+		        var infoBoxes = document.getElementsByClassName('info');
+		        for (var i = 0; i < infoBoxes.length; i++) {
+		            infoBoxes[i].style.display = infoVisible ? 'block' : 'none';
+		        }
+		    };
+		    return div;
+		};
+		toggleInfoBtn.addTo(map);
+
+			
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
